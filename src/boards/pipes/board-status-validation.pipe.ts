@@ -1,7 +1,7 @@
 import { ArgumentMetadata, BadRequestException, PipeTransform } from "@nestjs/common";
 import { BoardStatus } from "../board.model";
 
-// 자체제작 파이프 설정 
+// 자체제작 파이프를 이용한 유효성 체크  
 export class BoardStatusValidationPipe implements PipeTransform {
     
     readonly StatusOptions: string[] = [

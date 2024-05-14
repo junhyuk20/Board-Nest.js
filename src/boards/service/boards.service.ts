@@ -12,7 +12,6 @@ export class BoardsService {
   }
 
   createBoard(createBoardDto: CreateBoardDto) {
-    //const {title,description} = createBoardDto
     const {title,description} = createBoardDto
 
     const board: Board = {

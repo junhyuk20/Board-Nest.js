@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
-import { BoardsService } from './boards.service';
-import { Board, BoardStatus } from './board.model';
-import { CreateBoardDto } from './dto/createB-board';
-import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
+import { BoardsService } from '../service/boards.service';
+import { Board, BoardStatus } from '../board.model';
+import { CreateBoardDto } from '../dto/createB-board';
+import { BoardStatusValidationPipe } from '../pipes/board-status-validation.pipe';
 
 @Controller('boards')
 export class BoardsController {

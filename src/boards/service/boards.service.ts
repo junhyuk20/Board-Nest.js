@@ -1,13 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Board, BoardStatus } from '../board.model';
+import {BoardStatus } from '../board-status.enum';
 import {v1 as uuid} from 'uuid'
-import { CreateBoardDto } from '../dto/createB-board';
+import { CreateBoardDto } from '../dto/create-board';
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = [];
 
-  getAllBoards(): Board[] {
+/*   getAllBoards(): Board[] {
     return this.boards;
   }
 
@@ -42,5 +41,5 @@ export class BoardsService {
     const board = this.getBoardById(id);
     board.status = status;
     return board
-  }
+  } */
 }

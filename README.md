@@ -23,8 +23,8 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+  게시판 및 인증 기능을 구현 하며 NestJS 다지기 
+<!-- [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository. -->
 
 ## Installation
 

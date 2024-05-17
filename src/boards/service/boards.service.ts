@@ -12,6 +12,7 @@ export class BoardsService {
     private boardRepository: Repository<Board>,
   ) {}
 
+  // 생성
   async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
     const { title, description } = createBoardDto;
 
@@ -26,6 +27,7 @@ export class BoardsService {
     return board;
   }
 
+  // 조회
   async getBoardById(id: number): Promise<Board> {
     const found = await this.boardRepository.findOne({ where: { id } });
 
@@ -34,40 +36,31 @@ export class BoardsService {
     }
     return found;
   }
-  /*   getAllBoards(): Board[] {
-    return this.boards;
-  }
 
-  createBoard(createBoardDto: CreateBoardDto) {
-    const {title,description} = createBoardDto
-
-    const board: Board = {
-      id: uuid(),
-      title,
-      description,
-      status: BoardStatus.PUBLIC,
-    };
-    this.boards.push(board);
-    return board;
-  }
-
-  getBoardById(id: string): Board {
-    const found = this.boards.find((item) => item.id === id);
+  // 삭제
+  async deleteBoard(id: number): Promise<number> {
+    const deleteQuery = await this.boardRepository.delete({ id });
     
-    if (!found) {
-      // nest 내장 exception 함수 호출
-      throw new NotFoundException(`Can't find Board with id ${id}`);
-    } 
-    return found;
+
+    if (deleteQuery.affected === 0) {
+      throw new NotFoundException(`요청하신 id:${id} 가 존재하지 않습니다.`);
+    }
+    return deleteQuery.affected;
   }
 
-  deleteBoard(id: string) {
-    const found = this.getBoardById(id); 
-   this.boards = this.boards.filter((item) => item.id !== found.id) 
-  }
-  updateBoardStatus(id: string, status: BoardStatus): Board {
-    const board = this.getBoardById(id);
+  // 수정 
+ async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.getBoardById(id);
+   
     board.status = status;
+    await this.boardRepository.save(board);
+    
     return board
-  } */
+ }
+
+ // 전체 조회 
+ async getAllBoards():Promise<Board[]> {
+  const getAll = await this.boardRepository.find()
+  return getAll;
+ }
 }

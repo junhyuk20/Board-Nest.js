@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+/* import { DataSource, Repository } from "typeorm";
 import { Board } from "../entity/board.entity";
 import { Injectable } from "@nestjs/common";
 
@@ -7,7 +7,10 @@ export class BoardRepository extends Repository<Board> {
   constructor(dataSource: DataSource) {
     super(Board, dataSource.createEntityManager());  
   }
-}
+} */
+
+// type orm 버전이 0.3.x 버전으로 올라가면서 custom repository을 만들어 진행하는 방법을 지양함. 
+// 그 이유로는 "서비스 레이어와의 높은 결합도"가 있다. 다른 이유도 있지만 여기까지만 적어본다.
 
 /**
  *  Repository 클래스 정의 

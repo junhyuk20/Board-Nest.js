@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { BoardsController } from './controller/boards.controller';
 import { BoardsService } from './service/boards.service';
-import { BoardRepository } from './repository/board.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Board } from './entity/board.entity';
+
 
 /** 
  * TypeOrmModule 클래스 속 메서드 정의 
@@ -13,13 +14,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 */
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([BoardRepository])
-  ],
+  imports: [TypeOrmModule.forFeature([Board])], // Board 엔티티를 현재 모듈의 공급자로 등록
   controllers: [BoardsController],
-  providers: [
-    BoardsService,
-    BoardRepository,
-  ],
+  providers: [BoardsService],
 })
 export class BoardsModule {}

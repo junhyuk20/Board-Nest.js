@@ -1,12 +1,40 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {BoardStatus } from '../board-status.enum';
-import {v1 as uuid} from 'uuid'
 import { CreateBoardDto } from '../dto/create-board';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Board } from '../entity/board.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BoardsService {
+  constructor(
+    @InjectRepository(Board)
+    private boardRepository: Repository<Board>,
+  ) {}
 
-/*   getAllBoards(): Board[] {
+  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
+    const { title, description } = createBoardDto;
+
+    const board = this.boardRepository.create({
+      title,
+      description,
+      status: BoardStatus.PUBLIC,
+    });
+
+    await this.boardRepository.save(board); // 생성한 객체정보를 DB insert 할 때 save 메서드를 사용
+
+    return board;
+  }
+
+  async getBoardById(id: number): Promise<Board> {
+    const found = await this.boardRepository.findOne({ where: { id } });
+
+    if (!found) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    }
+    return found;
+  }
+  /*   getAllBoards(): Board[] {
     return this.boards;
   }
 

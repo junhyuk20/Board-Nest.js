@@ -16,22 +16,39 @@ export class BoardsController {
   // 생성
   @Post()
   @UsePipes(ValidationPipe) // nest 기본 내장된 pipes 사용한 유효성 검사
-  createBoard(@Body() createBoardDto: CreateBoardDto, 
-              @GetUser() user: User
-            ): Promise<Board> {
+  createBoard(
+    @Body() createBoardDto: CreateBoardDto,
+    @GetUser() user: User,
+  ): Promise<Board> {
     return this.boardService.createBoard(createBoardDto, user);
   }
 
   // 조회
-  @Get('/:id')
+  @Get('/user/:id')
   getBoardById(@Param('id') id: number): Promise<Board> {
     return this.boardService.getBoardById(id);
   }
 
+  // 모두 조회
+  @Get()
+  getAllBoards(): Promise<Board[]> {
+    return this.boardService.getAllBoards();
+  }
+
+  // 한 명의 사용자가 작성한 모든 계시물 조회
+  @Get('/oneUserBoards')
+  getUserBoards(@GetUser() user: User): Promise<Board[]> {
+    console.log(`여기들어옴??##: `, user.id)
+    return this.boardService.getUserBoards(user);
+  }
+
   //삭제
   @Delete('/:id')
-  deleteBoard(@Param('id', ParseIntPipe) id: number): Promise<number> {
-    return this.boardService.deleteBoard(id);
+  deleteBoard(
+              @Param('id', ParseIntPipe) id: number,
+              @GetUser() user: User
+            ): Promise<number> {
+    return this.boardService.deleteBoard(id, user);
   }
 
   // 수정
@@ -39,15 +56,7 @@ export class BoardsController {
   updateBoardStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body('status', BoardStatusValidationPipe) status: BoardStatus,
-  ) : Promise<Board> {
+  ): Promise<Board> {
     return this.boardService.updateBoardStatus(id, status);
   }
-
-  // 모두 조회 
-  @Get()
-  getAllBoards(): Promise<Board[]> {
-    return this.boardService.getAllBoards();
-  }
-
-  
 }

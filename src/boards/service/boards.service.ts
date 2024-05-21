@@ -14,7 +14,10 @@ export class BoardsService {
   ) {}
 
   // 생성
-  async createBoard(createBoardDto: CreateBoardDto, user: User): Promise<Board> {
+  async createBoard(
+    createBoardDto: CreateBoardDto,
+    user: User,
+  ): Promise<Board> {
     const { title, description } = createBoardDto;
 
     const board = this.boardRepository.create({
@@ -40,9 +43,11 @@ export class BoardsService {
   }
 
   // 삭제
-  async deleteBoard(id: number): Promise<number> {
-    const deleteQuery = await this.boardRepository.delete({ id });
-    
+  async deleteBoard(
+                    id: number,
+                    user: User
+                  ): Promise<number> {
+    const deleteQuery = await this.boardRepository.delete({ id, user });
 
     if (deleteQuery.affected === 0) {
       throw new NotFoundException(`요청하신 id:${id} 가 존재하지 않습니다.`);
@@ -50,19 +55,31 @@ export class BoardsService {
     return deleteQuery.affected;
   }
 
-  // 수정 
- async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+  // 수정
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
     const board = await this.getBoardById(id);
-   
+
     board.status = status;
     await this.boardRepository.save(board);
-    
-    return board
- }
 
- // 전체 조회 
- async getAllBoards():Promise<Board[]> {
-  const getAll = await this.boardRepository.find()
-  return getAll;
- }
+    return board;
+  }
+
+  // 전체 조회
+  async getAllBoards(): Promise<Board[]> {
+    const getAll = await this.boardRepository.find();
+    return getAll;
+  }
+
+  // 한 사용자의 전체 게시물 조회
+  async getUserBoards(user: User): Promise<Board[]> {
+    // createQueryBuilder 사용시 로우 쿼리 문 사용 가능, createQueryBuilder() 의 매개변수는 테이블 명칭이다.
+    const query = await this.boardRepository.createQueryBuilder('board');
+
+    query.where(`board.userId = :userId`, { userId: user.id }); 
+
+    const boards = await query.getMany();
+
+    return boards;
+  }
 }

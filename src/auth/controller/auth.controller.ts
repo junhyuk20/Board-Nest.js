@@ -2,6 +2,8 @@ import { Body, Controller, Post, Req, UseGuards, ValidationPipe } from '@nestjs/
 import { AuthService } from '../service/auth.service';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from '../get-user.decorator';
+import { User } from '../entity/user.entity';
 
 
 @Controller('auth')
@@ -22,9 +24,15 @@ export class AuthController {
     return this.userService.signIn(authCredentialsDto);
   }
 
-  @Post(`/test`)
+  /*   @Post(`/test`)
   @UseGuards(AuthGuard()) // 토큰 체크 미들웨어, 정보가 잘못 작성 되어 있을 시 예외처리 
   test(@Req() req) {
-    console.log(`req: `,req)
+    // console.log(req.user);  req.user 부분을 커스텀 데코레이터를 사용해서 진행 예제는 아래와 같다
+  } */
+
+  @Post(`/test`)
+  @UseGuards(AuthGuard()) // 토큰 체크 미들웨어, 정보가 잘못 작성 되어 있을 시 예외처리
+  test(@GetUser() user: User) {
+    console.log(`user: `, user)
   }
 }

@@ -1,19 +1,25 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BoardsService } from '../service/boards.service';
 import { BoardStatus } from '../board-status.enum';
 import { CreateBoardDto } from '../dto/create-board';
 import { BoardStatusValidationPipe } from '../pipes/board-status-validation.pipe';
 import { Board } from '../entity/board.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/entity/user.entity';
 
 @Controller('boards')
+@UseGuards(AuthGuard())
 export class BoardsController {
   constructor(private boardService: BoardsService) {}
 
   // 생성
   @Post()
   @UsePipes(ValidationPipe) // nest 기본 내장된 pipes 사용한 유효성 검사
-  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardService.createBoard(createBoardDto);
+  createBoard(@Body() createBoardDto: CreateBoardDto, 
+              @GetUser() user: User
+            ): Promise<Board> {
+    return this.boardService.createBoard(createBoardDto, user);
   }
 
   // 조회

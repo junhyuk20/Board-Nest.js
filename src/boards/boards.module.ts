@@ -3,6 +3,7 @@ import { BoardsController } from './controller/boards.controller';
 import { BoardsService } from './service/boards.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './entity/board.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 
 /** 
@@ -14,7 +15,11 @@ import { Board } from './entity/board.entity';
 */
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Board])], // Board 엔티티를 현재 모듈의 공급자로 등록
+  imports: [
+    // Board 엔티티를 현재 모듈의 공급자로 등록
+    TypeOrmModule.forFeature([Board]),
+    AuthModule,
+  ],
   controllers: [BoardsController],
   providers: [BoardsService],
 })

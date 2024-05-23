@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BoardsService } from '../service/boards.service';
 import { BoardStatus } from '../board-status.enum';
 import { CreateBoardDto } from '../dto/create-board';
@@ -11,6 +11,7 @@ import { User } from 'src/auth/entity/user.entity';
 @Controller('boards')
 @UseGuards(AuthGuard())
 export class BoardsController {
+  private logger = new Logger('BoardsController');
   constructor(private boardService: BoardsService) {}
 
   // 생성
@@ -20,6 +21,8 @@ export class BoardsController {
     @Body() createBoardDto: CreateBoardDto,
     @GetUser() user: User,
   ): Promise<Board> {
+    this.logger.verbose(`User: ${user.username} 게시물 만들기
+    Payload: ${JSON.stringify(createBoardDto)}`);
     return this.boardService.createBoard(createBoardDto, user);
   }
 
@@ -31,23 +34,24 @@ export class BoardsController {
 
   // 모두 조회
   @Get()
-  getAllBoards(): Promise<Board[]> {
+  getAllBoards(@GetUser() user: User): Promise<Board[]> {
+    this.logger.verbose(`User: ${user.username}의 모든 게시물 가져오기##`)
     return this.boardService.getAllBoards();
   }
 
   // 한 명의 사용자가 작성한 모든 계시물 조회
   @Get('/oneUserBoards')
   getUserBoards(@GetUser() user: User): Promise<Board[]> {
-    console.log(`여기들어옴??##: `, user.id)
+    this.logger.verbose(`User ${user.username} trying to get all boards`);
     return this.boardService.getUserBoards(user);
   }
 
   //삭제
   @Delete('/:id')
   deleteBoard(
-              @Param('id', ParseIntPipe) id: number,
-              @GetUser() user: User
-            ): Promise<number> {
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<number> {
     return this.boardService.deleteBoard(id, user);
   }
 

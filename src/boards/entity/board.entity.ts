@@ -17,6 +17,9 @@ export class Board   {
   @Column()
   status: BoardStatus;
 
+  @Column()
+  filePath: string;
+
   @ManyToOne(() => User, (user) => user.boards, {eager: false})
   user: User;
 

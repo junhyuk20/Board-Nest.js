@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Post, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BoardsService } from '../service/boards.service';
 import { BoardStatus } from '../board-status.enum';
 import { CreateBoardDto } from '../dto/create-board';
@@ -7,14 +7,33 @@ import { Board } from '../entity/board.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/entity/user.entity';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
+
+
+
+
+
+
 
 @Controller('boards')
-@UseGuards(AuthGuard())
+/* @UseGuards(AuthGuard()) */
 export class BoardsController {
   private logger = new Logger('BoardsController');
   constructor(private boardService: BoardsService) {}
 
-  // 생성
+  //* 생성 ( + 파일 )
+  @Post()
+  @UseInterceptors(FilesInterceptor('files'))
+  createBoard(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() createBoardDto: CreateBoardDto,
+  ) {
+    console.log(createBoardDto);
+    console.log(files);
+  }
+
+  /*   // 생성
   @Post()
   @UsePipes(ValidationPipe) // nest 기본 내장된 pipes 사용한 유효성 검사
   createBoard(
@@ -24,7 +43,7 @@ export class BoardsController {
     this.logger.verbose(`User: ${user.username} 게시물 만들기
     Payload: ${JSON.stringify(createBoardDto)}`);
     return this.boardService.createBoard(createBoardDto, user);
-  }
+  } */
 
   // 조회
   @Get('/user/:id')
@@ -35,7 +54,7 @@ export class BoardsController {
   // 모두 조회
   @Get()
   getAllBoards(@GetUser() user: User): Promise<Board[]> {
-    this.logger.verbose(`User: ${user.username}의 모든 게시물 가져오기##`)
+    //this.logger.verbose(`User: ${user.username}의 모든 게시물 가져오기##`)
     return this.boardService.getAllBoards();
   }
 

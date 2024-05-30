@@ -1,8 +1,0 @@
-# db: 
-#   host: 'localhost'
-#   username: 'postgres'
-#   password: 'krsoft'
-#   synchronize: true
-  
-# jwt: 
-#   secret: 'TestJwt1234'

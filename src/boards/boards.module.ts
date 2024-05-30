@@ -4,6 +4,8 @@ import { BoardsService } from './service/boards.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './entity/board.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { MulterConfigService } from 'src/config/file/multer.config';
 
 
 /** 
@@ -18,6 +20,10 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     // Board 엔티티를 현재 모듈의 공급자로 등록
     TypeOrmModule.forFeature([Board]),
+    // board 모듈에 multer 옵션 정의한 class 등록
+    MulterModule.registerAsync({
+      useClass: MulterConfigService
+    }),
     AuthModule,
   ],
   controllers: [BoardsController],

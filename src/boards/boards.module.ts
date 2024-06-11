@@ -6,6 +6,8 @@ import { Board } from './entity/board.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { MulterConfigService } from 'src/config/file/multer.config';
+import { FileModule } from 'src/file/file.module';
+import { UploadFile } from 'src/file/entity/file.entity';
 
 
 /** 
@@ -19,12 +21,14 @@ import { MulterConfigService } from 'src/config/file/multer.config';
 @Module({
   imports: [
     // Board 엔티티를 현재 모듈의 공급자로 등록
-    TypeOrmModule.forFeature([Board]),
+    TypeOrmModule.forFeature([Board,UploadFile]),
     // board 모듈에 multer 옵션 정의한 class 등록
     MulterModule.registerAsync({
       useClass: MulterConfigService
     }),
     AuthModule,
+    FileModule,
+    
   ],
   controllers: [BoardsController],
   providers: [BoardsService],

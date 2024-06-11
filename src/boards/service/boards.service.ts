@@ -5,19 +5,36 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from '../entity/board.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entity/user.entity';
+import { FileService } from 'src/file/service/file.service';
+
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private boardRepository: Repository<Board>,
+    private fileService: FileService 
+
   ) {}
 
-  // 생성
+  /*   async createTest(title: string) {
+    
+
+    const { raw } = await this.boardRepository
+      .createQueryBuilder()
+      .insert()
+      .values({ title })
+      .execute()
+    
+    return raw[0];
+  } */
+
+  // 게시판 생성
   async createBoard(
     createBoardDto: CreateBoardDto,
     user: User,
-  ): Promise<Board> {
+    files: Array<Express.Multer.File>,
+  ) {
     const { title, description } = createBoardDto;
 
     const board = this.boardRepository.create({
@@ -27,23 +44,27 @@ export class BoardsService {
       user,
     });
 
-    await this.boardRepository.save(board); // 생성한 객체정보를 DB insert 할 때 save 메서드를 사용
+    const { id } = await this.boardRepository.save(board); // save()는 insert 후 select 해서 insert한 객체를 반환한다
 
-    return board;
+
+    // board pk 값으로 file 등록하기
+    await this.fileService.create(id, files);
   }
 
+
+
   // 조회
-  async getBoardById(id: number): Promise<Board> {
+  /*   async getBoardById(id: number): Promise<Board> {
     const found = await this.boardRepository.findOne({ where: { id } });
 
     if (!found) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     }
     return found;
-  }
+  } */
 
   // 삭제
-  async deleteBoard(
+  /*   async deleteBoard(
                     id: number,
                     user: User
                   ): Promise<number> {
@@ -54,25 +75,25 @@ export class BoardsService {
     }
     return deleteQuery.affected;
   }
-
+ */
   // 수정
-  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+  /*   async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
     const board = await this.getBoardById(id);
 
     board.status = status;
-    await this.boardRepository.save(board);
+    await this.boardRepository.save(board); 
 
     return board;
-  }
+  } */
 
   // 전체 조회
-  async getAllBoards(): Promise<Board[]> {
+  /*   async getAllBoards(): Promise<Board[]> {
     const getAll = await this.boardRepository.find();
     return getAll;
-  }
+  } */
 
   // 한 사용자의 전체 게시물 조회
-  async getUserBoards(user: User): Promise<Board[]> {
+  /*   async getUserBoards(user: User): Promise<Board[]> {
     // createQueryBuilder 사용시 로우 쿼리 문 사용 가능, createQueryBuilder() 의 매개변수는 테이블 명칭이다.
     const query = await this.boardRepository.createQueryBuilder('board');
 
@@ -81,5 +102,5 @@ export class BoardsService {
     const boards = await query.getMany();
 
     return boards;
-  }
-}
+  }*/
+} 

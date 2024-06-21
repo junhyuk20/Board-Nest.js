@@ -13,7 +13,7 @@ export class UploadFile {
   filename: string;
 
   @Column()
-  uploadPath: string;
+  downloadPath: string;
 
   @ManyToOne(() => Board, (board) => board.file, {eager: false})
   board: Board;

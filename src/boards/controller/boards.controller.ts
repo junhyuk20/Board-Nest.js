@@ -27,6 +27,7 @@ export class BoardsController {
     @Body() createBoardDto: CreateBoardDto,
     @GetUser() user: User
   ) {
+    files
     this.boardService.createBoard(createBoardDto, user, files);
     console.log(`files: `, files);
   } 

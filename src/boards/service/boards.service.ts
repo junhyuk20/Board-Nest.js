@@ -44,11 +44,11 @@ export class BoardsService {
       user,
     });
 
-    const { id } = await this.boardRepository.save(board); // save()는 insert 후 select 해서 insert한 객체를 반환한다
-
+    //const { id } = await this.boardRepository.save(board); // save()는 insert 후 select 해서 insert한 객체를 반환한다
+    const boardData = await this.boardRepository.save(board); 
 
     // board pk 값으로 file 등록하기
-    await this.fileService.create(id, files);
+    await this.fileService.create(boardData, files);
   }
 
 

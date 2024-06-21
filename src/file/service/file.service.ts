@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploadFile } from '../entity/file.entity';
 import { Repository } from 'typeorm';
+import { Board } from 'src/boards/entity/board.entity';
 
 @Injectable()
 export class FileService {
@@ -10,15 +11,21 @@ export class FileService {
     private fileRepository: Repository<UploadFile>,
   ) {}
 
-  async create(pk: number, fileDatas: Array<Express.Multer.File>) {
-    console.log(pk);
+  async create(board: Board, fileDatas: Array<Express.Multer.File>) {
+    
     for (let data of fileDatas) {
-      const { originalname, filename, path } = data;
-      console.log(originalname);
-      console.log(filename);
-      console.log(path);
-      
-      //const insertData = this.fileRepository.create({ originalname, filename,  });
-    }
+      data['path'] = `/uploads/${data.filename}`;
+
+      const insertData = this.fileRepository.create({
+        originalname: data.originalname,
+        filename: data.filename,
+        downloadPath: data.path,
+        board,
+      });
+
+      await this.fileRepository.save(insertData);
+    } 
+
+    
   }
 }

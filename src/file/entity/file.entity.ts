@@ -1,3 +1,4 @@
+import { isNotEmpty } from "class-validator";
 import { Board } from "src/boards/entity/board.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -15,6 +16,6 @@ export class UploadFile {
   @Column()
   downloadPath: string;
 
-  @ManyToOne(() => Board, (board) => board.file, {eager: false})
+  @ManyToOne(() => Board, (board) => board.file, { eager: false, nullable: false })
   board: Board;
 }

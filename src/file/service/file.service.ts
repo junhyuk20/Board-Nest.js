@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploadFile } from '../entity/file.entity';
 import { Repository } from 'typeorm';
@@ -12,20 +12,23 @@ export class FileService {
   ) {}
 
   async create(board: Board, fileDatas: Array<Express.Multer.File>) {
-    
-    for (let data of fileDatas) {
-      data['path'] = `/uploads/${data.filename}`;
+    let queryResult = null;
+    let result = 0;
 
-      const insertData = this.fileRepository.create({
-        originalname: data.originalname,
-        filename: data.filename,
-        downloadPath: data.path,
-        board,
-      });
+     for (let fileData of fileDatas) {
+       fileData['path'] = `/uploads/${fileData.filename}`;
 
-      await this.fileRepository.save(insertData);
-    } 
+       queryResult = await this.fileRepository.save({
+         originalname: fileData.originalname,
+         filename: fileData.filename,
+         downloadPath: fileData.path,
+         board,
+         //boardId:'1', 예외발생 코드
+       });
 
+       queryResult.id !== undefined ? (result = 1) : '';
+     }   
+    return result;
     
   }
 }

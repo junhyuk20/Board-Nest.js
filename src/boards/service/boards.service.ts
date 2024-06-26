@@ -3,9 +3,9 @@ import {BoardStatus } from '../board-status.enum';
 import { CreateBoardDto } from '../dto/create-board';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from '../entity/board.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/auth/entity/user.entity';
-import { FileService } from 'src/file/service/file.service';
+import { UploadFile } from 'src/file/entity/file.entity';
 
 
 @Injectable()
@@ -13,21 +13,11 @@ export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private boardRepository: Repository<Board>,
-    private fileService: FileService 
-
+    @InjectRepository(UploadFile)
+    private fileRepository: Repository<UploadFile>,
+    private dataSource: DataSource,
   ) {}
 
-  /*   async createTest(title: string) {
-    
-
-    const { raw } = await this.boardRepository
-      .createQueryBuilder()
-      .insert()
-      .values({ title })
-      .execute()
-    
-    return raw[0];
-  } */
 
   // 게시판 생성
   async createBoard(
@@ -36,22 +26,45 @@ export class BoardsService {
     files: Array<Express.Multer.File>,
   ) {
     const { title, description } = createBoardDto;
+  
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const board = this.boardRepository.create({
-      title,
-      description,
-      status: BoardStatus.PUBLIC,
-      user,
-    });
+    await queryRunner.connect();
+    await queryRunner.startTransaction()
 
-    //const { id } = await this.boardRepository.save(board); // save()는 insert 후 select 해서 insert한 객체를 반환한다
-    const boardData = await this.boardRepository.save(board); 
+   
+    try {
+      const board = await queryRunner.manager.save(Board, {
+        title,
+        description,
+        status: BoardStatus.PUBLIC,
+        user
+      });
 
-    // board pk 값으로 file 등록하기
-    await this.fileService.create(boardData, files);
+      for (let file of files) {
+        file['path'] = `/uploads/${file.filename}`;
+        await queryRunner.manager.save(UploadFile, {
+          originalname: file.originalname,
+          filename: file.filename,
+          downloadPath: file.path,
+          board,
+        });
+      }
+     
+      await queryRunner.commitTransaction();
+
+      return  {message: "Query Success", status: 728}
+
+    } catch (error) {
+      console.log(`등록 쿼리 에러 발생## `, error);
+      await queryRunner.rollbackTransaction();
+      return { message: 'QueryFailedError', status:600 };
+
+    } finally {
+      await queryRunner.release();
+    }
+    
   }
-
-
 
   // 조회
   /*   async getBoardById(id: number): Promise<Board> {

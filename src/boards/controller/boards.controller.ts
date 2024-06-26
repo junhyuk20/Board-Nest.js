@@ -16,21 +16,18 @@ export class BoardsController {
   private logger = new Logger('BoardsController');
   constructor(private boardService: BoardsService) {}
 
-
-
   //* 생성 ( + 파일 )
   @Post()
   @UseGuards(AuthGuard())
+  @UsePipes(ValidationPipe) //Nest 내장 파이프, 요청 파라메터를 dto를 받을 시 적용(dto 확인)
   @UseInterceptors(FilesInterceptor('files'))
   async createBoard(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() createBoardDto: CreateBoardDto,
-    @GetUser() user: User
+    @GetUser() user: User,
   ) {
-    files
-    this.boardService.createBoard(createBoardDto, user, files);
-    console.log(`files: `, files);
-  } 
+    return this.boardService.createBoard(createBoardDto, user, files);
+  }
 
   /*   // 생성
   @Post()
@@ -42,30 +39,30 @@ export class BoardsController {
     this.logger.verbose(`User: ${user.username} 게시물 만들기
     Payload: ${JSON.stringify(createBoardDto)}`);
     return this.boardService.createBoard(createBoardDto, user);
-  } */
+  }*/
 
   // 조회
-/*   @Get('/user/:id')
+  /*   @Get('/user/:id')
   getBoardById(@Param('id') id: number): Promise<Board> {
     return this.boardService.getBoardById(id);
   } */
 
   // 모두 조회
-/*   @Get()
+  /*   @Get()
   getAllBoards(@GetUser() user: User): Promise<Board[]> {
     //this.logger.verbose(`User: ${user.username}의 모든 게시물 가져오기##`)
     return this.boardService.getAllBoards();
   } */
 
   // 한 명의 사용자가 작성한 모든 계시물 조회
-/*   @Get('/oneUserBoards')
+  /*   @Get('/oneUserBoards')
   getUserBoards(@GetUser() user: User): Promise<Board[]> {
     this.logger.verbose(`User ${user.username} trying to get all boards`);
     return this.boardService.getUserBoards(user);
   } */
 
   //삭제
-/*   @Delete('/:id')
+  /*   @Delete('/:id')
   deleteBoard(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
@@ -74,7 +71,7 @@ export class BoardsController {
   } */
 
   // 수정
-/*   @Patch('/:id/status')
+  /*   @Patch('/:id/status')
   updateBoardStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body('status', BoardStatusValidationPipe) status: BoardStatus,

@@ -29,6 +29,14 @@ export class BoardsController {
     return this.boardService.createBoard(createBoardDto, user, files);
   }
 
+
+  // 모두 조회
+  /*   @Get()
+  getAllBoards(@GetUser() user: User): Promise<Board[]> {
+    //this.logger.verbose(`User: ${user.username}의 모든 게시물 가져오기##`)
+    return this.boardService.getAllBoards();
+  } */
+
   /*   // 생성
   @Post()
   @UsePipes(ValidationPipe) // nest 기본 내장된 pipes 사용한 유효성 검사
@@ -45,13 +53,6 @@ export class BoardsController {
   /*   @Get('/user/:id')
   getBoardById(@Param('id') id: number): Promise<Board> {
     return this.boardService.getBoardById(id);
-  } */
-
-  // 모두 조회
-  /*   @Get()
-  getAllBoards(@GetUser() user: User): Promise<Board[]> {
-    //this.logger.verbose(`User: ${user.username}의 모든 게시물 가져오기##`)
-    return this.boardService.getAllBoards();
   } */
 
   // 한 명의 사용자가 작성한 모든 계시물 조회

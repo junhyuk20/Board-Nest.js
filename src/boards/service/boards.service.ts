@@ -18,7 +18,6 @@ export class BoardsService {
     private dataSource: DataSource,
   ) {}
 
-
   // 게시판 생성
   async createBoard(
     createBoardDto: CreateBoardDto,
@@ -26,19 +25,18 @@ export class BoardsService {
     files: Array<Express.Multer.File>,
   ) {
     const { title, description } = createBoardDto;
-  
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
-    await queryRunner.startTransaction()
+    await queryRunner.startTransaction();
 
-   
     try {
       const board = await queryRunner.manager.save(Board, {
         title,
         description,
         status: BoardStatus.PUBLIC,
-        user
+        user,
       });
 
       for (let file of files) {
@@ -50,20 +48,23 @@ export class BoardsService {
           board,
         });
       }
-     
+
       await queryRunner.commitTransaction();
 
-      return  {message: "Query Success", status: 728}
-
+      return { message: 'Query Success', status: 728 };
     } catch (error) {
       console.log(`등록 쿼리 에러 발생## `, error);
       await queryRunner.rollbackTransaction();
-      return { message: 'QueryFailedError', status:600 };
-
+      return { message: 'QueryFailedError', status: 600 };
     } finally {
       await queryRunner.release();
     }
-    
+  }
+
+  // 전체 조회
+  async getAllBoards(): Promise<Board[]> {
+    const getAll = await this.boardRepository.find();
+    return getAll;
   }
 
   // 조회
@@ -97,12 +98,6 @@ export class BoardsService {
     await this.boardRepository.save(board); 
 
     return board;
-  } */
-
-  // 전체 조회
-  /*   async getAllBoards(): Promise<Board[]> {
-    const getAll = await this.boardRepository.find();
-    return getAll;
   } */
 
   // 한 사용자의 전체 게시물 조회

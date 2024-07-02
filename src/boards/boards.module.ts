@@ -21,16 +21,16 @@ import { UploadFile } from 'src/file/entity/file.entity';
 @Module({
   imports: [
     // Board 엔티티를 현재 모듈의 공급자로 등록
-    TypeOrmModule.forFeature([Board,UploadFile]),
+    TypeOrmModule.forFeature([Board, UploadFile]),
     // board 모듈에 multer 옵션 정의한 class 등록
     MulterModule.registerAsync({
-      useClass: MulterConfigService
+      useClass: MulterConfigService,
     }),
     AuthModule,
     FileModule,
-    
   ],
   controllers: [BoardsController],
   providers: [BoardsService],
+  exports: [BoardsService],
 })
 export class BoardsModule {}
